@@ -1,0 +1,23 @@
+[Unit]
+Description=Scirius Gunicorn daemon
+Requires=scirius.socket
+After=network.target
+
+[Service]
+Restart=on-failure
+PIDFile=/run/scirius/scirius.pid
+User=scirius
+Group=scirius
+RuntimeDirectory=scirius
+WorkingDirectory=/var/lib/scirius
+Type=simple
+ExecStartPre=/opt/venvs/scirius/bin/manage.py migrate
+ExecStart=/opt/venvs/scirius/bin/gunicorn --pid /run/scirius/scirius.pid   \
+          --access-logfile /var/log/scirius/access.log --error-logfile /var/log/scirius/error.log \
+          scirius.wsgi
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

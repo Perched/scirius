@@ -15,6 +15,8 @@ from django import get_version
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+GLOBAL_CONFIG_OVERRIDE = None
+
 SCIRIUS_FLAVOR="Scirius CE"
 SCIRIUS_VERSION="3.2.0"
 
@@ -280,6 +282,12 @@ try:
     from local_settings import *
 except:
     pass
+
+if GLOBAL_CONFIG_OVERRIDE is not None:
+    try:
+        exec open(GLOBAL_CONFIG_OVERRIDE) in globals()
+    except:
+        pass
 
 if KIBANA_PROXY:
     INSTALLED_APPS += ( 'revproxy',)
